@@ -62,15 +62,24 @@ int main(int argc, char **argv)
 
     fseek(oldFile, 1, SEEK_CUR);
 
-    unsigned char old[numRow][numCol][3];
+    unsigned char ***old_pixel=(unsigned char***)malloc(sizeof(unsigned char**)*numRow);
+    unsigned char ***new_pixel=(unsigned char***)malloc(sizeof(unsigned char**)*numRow);
+    for (int i=0;i<numRow;i++){
+        old_pixel[i]=(unsigned char**)malloc(sizeof(unsigned char*)*numCol);
+        new_pixel[i]=(unsigned char**)malloc(sizeof(unsigned char*)*numCol);
+        for (int j=0;j<numCol;j++){
+            old_pixel[i][j]=(unsigned char*)calloc(3,sizeof(unsigned char));
+            new_pixel[i][j]=(unsigned char*)calloc(3,sizeof(unsigned char));
+        }
+    }
 
     for (int i=0;i<numRow;i++){
         for (int j=0;j<numCol;j++){
-            fread(old[i][j], 1, 3, oldFile);
+            fread(old_pixel[i][j], 1, 3, oldFile);
             
             //b&w
-            int newval=(0.299*(old[i][j][0]))+(0.587*(old[i][j][1]))+(0.114*(old[i][j][2]));
-            old[i][j][0]=old[i][j][1]=old[i][j][2]=newval;
+            int newval=(0.299*(old_pixel[i][j][0]))+(0.587*(old_pixel[i][j][1]))+(0.114*(old_pixel[i][j][2]));
+            old_pixel[i][j][0]=old_pixel[i][j][1]=old_pixel[i][j][2]=newval;
             
             //random colorful
             // old[i][j][0]=rand()%256;
@@ -85,24 +94,24 @@ int main(int argc, char **argv)
 
     //edge detection
 
-    unsigned char new[numRow][numCol][3];
-    memset(new,0,sizeof(new));
+    // unsigned char new[numRow][numCol][3];
+    // memset(new,0,sizeof(new));
 
     int threshold=100;
 
     for (int i=1;i<numRow-1;i++){
         for (int j=1;j<numCol-1;j++){
 
-            int val_x=(-1*old[i-1][j-1][0])+(-2*old[i][j-1][0])+(-1*old[i+1][j-1][0])+\
-                    (1*old[i-1][j+1][0])+(2*old[i][j+1][0])+(1*old[i+1][j+1][0]);
+            int val_x=(-1*old_pixel[i-1][j-1][0])+(-2*old_pixel[i][j-1][0])+(-1*old_pixel[i+1][j-1][0])+\
+                    (1*old_pixel[i-1][j+1][0])+(2*old_pixel[i][j+1][0])+(1*old_pixel[i+1][j+1][0]);
             
-            int val_y=(1*old[i-1][j-1][0])+(2*old[i-1][j][0])+(1*old[i-1][j+1][0])+\
-                    (-1*old[i+1][j-1][0])+(-2*old[i+1][j][0])+(-1*old[i+1][j+1][0]);
+            int val_y=(1*old_pixel[i-1][j-1][0])+(2*old_pixel[i-1][j][0])+(1*old_pixel[i-1][j+1][0])+\
+                    (-1*old_pixel[i+1][j-1][0])+(-2*old_pixel[i+1][j][0])+(-1*old_pixel[i+1][j+1][0]);
 
             int val=sqrt(pow(val_x,2)+pow(val_y,2));
 
             if (val>threshold){
-                new[i][j][0]=new[i][j][1]=new[i][j][2]=maxNum;
+                new_pixel[i][j][0]=new_pixel[i][j][1]=new_pixel[i][j][2]=maxNum;
             }
 
 
@@ -111,7 +120,7 @@ int main(int argc, char **argv)
 
     for (int i=0;i<numRow;i++){
         for (int j=0;j<numCol;j++){
-            fwrite(new[i][j],1,3,newFile);
+            fwrite(new_pixel[i][j],1,3,newFile);
         }
     } 
  

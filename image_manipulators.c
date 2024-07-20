@@ -1,5 +1,29 @@
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
+
+
+unsigned char*** create_list(int numRow,int numCol){
+    unsigned char ***pixel_arr=(unsigned char***)malloc(sizeof(unsigned char**)*numRow);
+    for (int i=0;i<numRow;i++){
+        pixel_arr[i]=(unsigned char**)malloc(sizeof(unsigned char*)*numCol);
+        for (int j=0;j<numCol;j++){
+            pixel_arr[i][j]=(unsigned char*)calloc(3,sizeof(unsigned char));
+        }
+    }
+    return pixel_arr;
+}
+
+void free_list(unsigned char*** list,int numRow,int numCol){
+    for (int i=0;i<numRow;i++){
+        for (int j=0;j<numCol;j++){
+            free(list[i][j]);
+        }
+        free(list[i]);
+    }
+    free(list);
+}
+
 
 void grey_scale(unsigned char*** old_pixel,unsigned char*** new_pixel,int numRow,int numCol,int maxNum){
 

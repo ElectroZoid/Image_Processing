@@ -63,16 +63,8 @@ int main(int argc, char **argv)
 
     fseek(oldFile, 1, SEEK_CUR);
 
-    unsigned char ***old_pixel=(unsigned char***)malloc(sizeof(unsigned char**)*numRow);
-    unsigned char ***new_pixel=(unsigned char***)malloc(sizeof(unsigned char**)*numRow);
-    for (int i=0;i<numRow;i++){
-        old_pixel[i]=(unsigned char**)malloc(sizeof(unsigned char*)*numCol);
-        new_pixel[i]=(unsigned char**)malloc(sizeof(unsigned char*)*numCol);
-        for (int j=0;j<numCol;j++){
-            old_pixel[i][j]=(unsigned char*)calloc(3,sizeof(unsigned char));
-            new_pixel[i][j]=(unsigned char*)calloc(3,sizeof(unsigned char));
-        }
-    }
+    unsigned char ***old_pixel=create_list(numRow,numCol);
+    unsigned char ***new_pixel=create_list(numRow,numCol);
 
     for (int i=0;i<numRow;i++){
         for (int j=0;j<numCol;j++){
@@ -93,5 +85,8 @@ int main(int argc, char **argv)
             fwrite(new_pixel[i][j],1,3,newFile);
         }
     } 
+
+    free_list(old_pixel,numRow,numCol);
+    free_list(new_pixel,numRow,numCol);
  
 }

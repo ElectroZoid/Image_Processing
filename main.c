@@ -4,6 +4,7 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
+#include "image_manipulators.h"
 
 int main(int argc, char **argv)
 {   
@@ -76,47 +77,16 @@ int main(int argc, char **argv)
     for (int i=0;i<numRow;i++){
         for (int j=0;j<numCol;j++){
             fread(old_pixel[i][j], 1, 3, oldFile);
-            
-            //b&w
-            int newval=(0.299*(old_pixel[i][j][0]))+(0.587*(old_pixel[i][j][1]))+(0.114*(old_pixel[i][j][2]));
-            old_pixel[i][j][0]=old_pixel[i][j][1]=old_pixel[i][j][2]=newval;
-            
-            //random colorful
-            // old[i][j][0]=rand()%256;
-            // old[i][j][1]=rand()%256;
-            // old[i][j][2]=rand()%256;
-
-            //random b&w
-            // old[i][j][0]=old[i][j][1]=old[i][j][2]=rand()%maxNum;
-            // fwrite(old[i][j],1,3,newFile);
         }
     }
 
-    //edge detection
-
-    // unsigned char new[numRow][numCol][3];
-    // memset(new,0,sizeof(new));
-
-    int threshold=100;
-
-    for (int i=1;i<numRow-1;i++){
-        for (int j=1;j<numCol-1;j++){
-
-            int val_x=(-1*old_pixel[i-1][j-1][0])+(-2*old_pixel[i][j-1][0])+(-1*old_pixel[i+1][j-1][0])+\
-                    (1*old_pixel[i-1][j+1][0])+(2*old_pixel[i][j+1][0])+(1*old_pixel[i+1][j+1][0]);
-            
-            int val_y=(1*old_pixel[i-1][j-1][0])+(2*old_pixel[i-1][j][0])+(1*old_pixel[i-1][j+1][0])+\
-                    (-1*old_pixel[i+1][j-1][0])+(-2*old_pixel[i+1][j][0])+(-1*old_pixel[i+1][j+1][0]);
-
-            int val=sqrt(pow(val_x,2)+pow(val_y,2));
-
-            if (val>threshold){
-                new_pixel[i][j][0]=new_pixel[i][j][1]=new_pixel[i][j][2]=maxNum;
-            }
-
-
-        }
+    if (argv[argc-1][0]=='1'){
+        grey_scale(old_pixel,new_pixel,numRow,numCol,maxNum);       
     }
+    else if (argv[argc-1][0]=='2'){
+        edge_detection(old_pixel,new_pixel,numRow,numCol,maxNum,100);
+    }
+
 
     for (int i=0;i<numRow;i++){
         for (int j=0;j<numCol;j++){

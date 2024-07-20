@@ -38,16 +38,18 @@ void grey_scale(unsigned char*** old_pixel,unsigned char*** new_pixel,int numRow
 
 void edge_detection(unsigned char*** old_pixel,unsigned char*** new_pixel,int numRow,int numCol,int maxNum,int threshold){
 
-    grey_scale(old_pixel,new_pixel,numRow,numCol,maxNum);
+    unsigned char*** intermediate_pixel_info=create_list(numRow,numCol);
+
+    grey_scale(old_pixel,intermediate_pixel_info,numRow,numCol,maxNum);
 
     for (int i=1;i<numRow-1;i++){
         for (int j=1;j<numCol-1;j++){
 
-            int val_x=(-1*new_pixel[i-1][j-1][0])+(-2*new_pixel[i][j-1][0])+(-1*new_pixel[i+1][j-1][0])+\
-                    (1*new_pixel[i-1][j+1][0])+(2*new_pixel[i][j+1][0])+(1*new_pixel[i+1][j+1][0]);
+            int val_x=(-1*intermediate_pixel_info[i-1][j-1][0])+(-2*intermediate_pixel_info[i][j-1][0])+(-1*intermediate_pixel_info[i+1][j-1][0])+\
+                    (1*intermediate_pixel_info[i-1][j+1][0])+(2*intermediate_pixel_info[i][j+1][0])+(1*intermediate_pixel_info[i+1][j+1][0]);
             
-            int val_y=(1*new_pixel[i-1][j-1][0])+(2*new_pixel[i-1][j][0])+(1*new_pixel[i-1][j+1][0])+\
-                    (-1*new_pixel[i+1][j-1][0])+(-2*new_pixel[i+1][j][0])+(-1*new_pixel[i+1][j+1][0]);
+            int val_y=(1*intermediate_pixel_info[i-1][j-1][0])+(2*intermediate_pixel_info[i-1][j][0])+(1*intermediate_pixel_info[i-1][j+1][0])+\
+                    (-1*intermediate_pixel_info[i+1][j-1][0])+(-2*intermediate_pixel_info[i+1][j][0])+(-1*intermediate_pixel_info[i+1][j+1][0]);
 
             int val=sqrt(pow(val_x,2)+pow(val_y,2));
 
@@ -59,7 +61,7 @@ void edge_detection(unsigned char*** old_pixel,unsigned char*** new_pixel,int nu
             }
         }
     }
-
-
+    
+    free_list(intermediate_pixel_info,numRow,numCol);
 
 }
